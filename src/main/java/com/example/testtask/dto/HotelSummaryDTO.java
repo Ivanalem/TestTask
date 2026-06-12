@@ -1,5 +1,5 @@
 package com.example.testtask.dto;
 
-public record HotelSummaryDTO(Long hotelId,String hotelName,String hotelDescription,String hotelAddress,String hotelPhone) {
+public record HotelSummaryDTO(Long id,String name,String description,String address,String Phone)  {
     }
 

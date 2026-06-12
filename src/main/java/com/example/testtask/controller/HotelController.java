@@ -1,6 +1,7 @@
 package com.example.testtask.controller;
 
 import com.example.testtask.dto.HotelExtendedDTO;
+import com.example.testtask.dto.HotelSummaryDTO;
 import com.example.testtask.model.Address;
 import com.example.testtask.model.ArrivalTime;
 import com.example.testtask.model.Contacts;
@@ -9,6 +10,7 @@ import com.example.testtask.service.HotelService;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -24,18 +26,18 @@ public class HotelController {
     }
 
     @GetMapping("/property-view/hotels")
-    public List<Hotel> getAllHotels() {
+    public List<HotelSummaryDTO> getAllHotels() {
         return hotelService.findAllHotels();
     }
 
     @GetMapping("/property-view/hotels/{id}")
-    public Hotel getHotelById(@PathVariable Long id){
+    public HotelExtendedDTO getHotelById(@PathVariable Long id) {
         return hotelService.findHotelById(id);
     }
 
     @PostMapping("/property-view/hotels")
     @Transactional
-    public Hotel saveHotel(@RequestBody HotelExtendedDTO hotelEx){
+    public Hotel saveHotel(@RequestBody HotelExtendedDTO hotelEx) {
         Hotel hotel = new Hotel();
         hotel.setName(hotelEx.name());
         hotel.setDescription(hotelEx.description());
@@ -43,7 +45,15 @@ public class HotelController {
         hotel.setBrand(hotelEx.brand());
         hotel.setContacts(hotelEx.contacts());
         hotel.setArrivalTime(hotelEx.arrivalTime());
-        hotel.setAmenities(hotelEx.amenities());
+
+        Set<String> amenities = hotelEx.amenities()
+                .orElseGet(HashSet::new);
+        hotel.setAmenities(amenities);
+
         return hotelService.saveHotel(hotel);
     }
+    @PostMapping("/property-view/hotels/{id}/amenities")
+    public void addAmenities(@PathVariable Long id, @RequestBody List<String> amenities) {
+        hotelService.addAmenities(id, amenities);
     }
+}
