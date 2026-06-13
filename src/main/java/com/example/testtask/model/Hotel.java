@@ -17,11 +17,11 @@ public class Hotel {
     @Column(length = 2000, nullable = false)
     private String description;
 
+    private String brand;
+
     @Embedded
     @Column(nullable = false)
     private Address address;
-
-    private String brand;
 
     @Embedded
     private Contacts contacts;
@@ -29,6 +29,11 @@ public class Hotel {
     @Embedded
     private ArrivalTime arrivalTime;
 
+    @ElementCollection
+    @CollectionTable(
+            name = "hotels_amenities",
+            joinColumns = @JoinColumn(name = "hotel_id")
+    )
     @Column(name = "amenities")
     private Set<String> amenities = new HashSet<>();
 

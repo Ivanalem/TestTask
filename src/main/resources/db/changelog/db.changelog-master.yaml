@@ -1,3 +1,5 @@
 databaseChangeLog:
   - include:
-      file: db/changelog/changeset/
+      file: db/changelog/changeset/create-hotel-table.yaml
+  - include:
+      file: db/changelog/changeset/create-table-amenities.yaml

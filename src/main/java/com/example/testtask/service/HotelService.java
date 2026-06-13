@@ -5,13 +5,16 @@ import com.example.testtask.dto.HotelSummaryDTO;
 import com.example.testtask.model.Hotel;
 
 import java.util.List;
+import java.util.Map;
 
 public interface HotelService {
 
     List<HotelSummaryDTO> findAllHotels();
     HotelExtendedDTO findHotelById(Long id);
-    Hotel saveHotel(Hotel hotel);
+    Hotel saveHotel(HotelExtendedDTO hotelEx);
     void addAmenities(Long id, List<String> amenities);
+    Map<String, Long> getHistogram(String param);
+    List<HotelSummaryDTO> findHotelByParam(String name, String brand, String city, String country, String amenity);
 
 
 

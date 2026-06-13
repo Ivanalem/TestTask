@@ -2,21 +2,16 @@ package com.example.testtask.controller;
 
 import com.example.testtask.dto.HotelExtendedDTO;
 import com.example.testtask.dto.HotelSummaryDTO;
-import com.example.testtask.model.Address;
-import com.example.testtask.model.ArrivalTime;
-import com.example.testtask.model.Contacts;
 import com.example.testtask.model.Hotel;
 import com.example.testtask.service.HotelService;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 
 @RestController
-@RequestMapping
+@RequestMapping("/")
 public class HotelController {
 
     private final HotelService hotelService;
@@ -25,35 +20,37 @@ public class HotelController {
         this.hotelService = hotelService;
     }
 
-    @GetMapping("/property-view/hotels")
+    @GetMapping("hotels")
     public List<HotelSummaryDTO> getAllHotels() {
         return hotelService.findAllHotels();
     }
 
-    @GetMapping("/property-view/hotels/{id}")
+    @GetMapping("hotels/{id}")
     public HotelExtendedDTO getHotelById(@PathVariable Long id) {
         return hotelService.findHotelById(id);
     }
 
-    @PostMapping("/property-view/hotels")
-    @Transactional
+    @PostMapping("hotels")
     public Hotel saveHotel(@RequestBody HotelExtendedDTO hotelEx) {
-        Hotel hotel = new Hotel();
-        hotel.setName(hotelEx.name());
-        hotel.setDescription(hotelEx.description());
-        hotel.setAddress(hotelEx.address());
-        hotel.setBrand(hotelEx.brand());
-        hotel.setContacts(hotelEx.contacts());
-        hotel.setArrivalTime(hotelEx.arrivalTime());
-
-        Set<String> amenities = hotelEx.amenities()
-                .orElseGet(HashSet::new);
-        hotel.setAmenities(amenities);
-
-        return hotelService.saveHotel(hotel);
+        return hotelService.saveHotel(hotelEx);
     }
-    @PostMapping("/property-view/hotels/{id}/amenities")
+
+    @PostMapping("hotels/{id}/amenities")
     public void addAmenities(@PathVariable Long id, @RequestBody List<String> amenities) {
         hotelService.addAmenities(id, amenities);
+    }
+
+    @GetMapping("histogram/{param}")
+    public Map<String, Long> getHistogram(@PathVariable String param) {
+        return hotelService.getHistogram(param);
+    }
+
+    @GetMapping("search")
+    public List<HotelSummaryDTO> findHotelByParam(@RequestParam(required = false) String name,
+                                                  @RequestParam(required = false) String brand,
+                                                  @RequestParam(required = false) String city,
+                                                  @RequestParam(required = false) String country,
+                                                  @RequestParam(required = false) String amenities) {
+        return hotelService.findHotelByParam(name, brand, city, country, amenities);
     }
 }

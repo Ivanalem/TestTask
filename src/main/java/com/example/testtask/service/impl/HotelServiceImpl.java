@@ -9,8 +9,7 @@ import com.example.testtask.service.HotelService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -68,10 +67,20 @@ public class HotelServiceImpl implements HotelService {
     }
 
     @Override
-    public Hotel saveHotel(Hotel hotel) {
-        if (hotel == null) {
-            throw new IllegalArgumentException("hotel cannot be null");
-        }
+    @Transactional
+    public Hotel saveHotel(HotelExtendedDTO hotelEx) {
+        Hotel hotel = new Hotel();
+        hotel.setName(hotelEx.name());
+        hotel.setDescription(hotelEx.description());
+        hotel.setAddress(hotelEx.address());
+        hotel.setBrand(hotelEx.brand());
+        hotel.setContacts(hotelEx.contacts());
+        hotel.setArrivalTime(hotelEx.arrivalTime());
+
+        Set<String> amenities = hotelEx.amenities()
+                .orElseGet(HashSet::new);
+        hotel.setAmenities(amenities);
+
         return hotelRepository.save(hotel);
     }
 
@@ -83,6 +92,48 @@ public class HotelServiceImpl implements HotelService {
         hotel.getAmenities().addAll(amenities);
         hotelRepository.save(hotel);
     }
+
+    @Override
+    public Map<String, Long> getHistogram(String param) {
+
+        List<Hotel> hotels = hotelRepository.findAll();
+
+        return switch (param.toLowerCase()) {
+            case "brand" -> hotels.stream()
+                    .filter(hotel -> hotel.getBrand() != null)
+                    .collect(Collectors.groupingBy(Hotel::getBrand, Collectors.counting()));
+            case "city" -> hotels.stream()
+                    .filter(hotel -> hotel.getAddress().getCity() != null)
+                    .collect(Collectors.groupingBy(hotel -> hotel.getAddress().getCity(),Collectors.counting()));
+            case "country" -> hotels.stream()
+                    .filter(hotel -> hotel.getAddress().getCountry() != null)
+                    .collect(Collectors.groupingBy(hotel -> hotel.getAddress().getCountry(),Collectors.counting()));
+            case "amenities" -> hotels.stream()
+                    .filter(hotel -> hotel.getAmenities() != null)
+                    .flatMap(hotel -> hotel.getAmenities().stream())
+                    .collect(Collectors.groupingBy(amenity -> amenity, Collectors.counting()));
+
+            default -> throw new IllegalArgumentException("Invalid param: " + param);
+        };
+    }
+
+    public List<HotelSummaryDTO> findHotelByParam(String name, String brand, String city, String country, String amenities) {
+        return hotelRepository.findAll().stream()
+                .filter(hotel -> matchField(hotel.getName(), name))
+                .filter(hotel -> matchField(hotel.getBrand(), brand))
+                .filter(hotel -> hotel.getAddress() != null && matchField(hotel.getAddress().getCity(), city))
+                .filter(hotel -> hotel.getAddress() != null && matchField(hotel.getAddress().getCountry(), country))
+                .filter(hotel -> hotel.getAmenities() == null || amenities == null || amenities.isBlank() ||
+                        hotel.getAmenities().stream().anyMatch(a -> a.equalsIgnoreCase(amenities)))
+                .map(this::convertToSummaryDTO)
+                .collect(Collectors.toList());
+    }
+    //Check null and convert param to lower case
+    private boolean matchField(String fieldValue, String searchValue) {
+        return searchValue == null || searchValue.isBlank() ||
+                (fieldValue != null && fieldValue.toLowerCase().contains(searchValue.toLowerCase()));
+    }
+
 
 }
 

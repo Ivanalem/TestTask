@@ -1,13 +1,16 @@
 package com.example.testtask.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 
 @Embeddable
 public class Address {
+    @Column(name = "house_number")
     private String houseNumber;
     private String street;
     private String city;
     private String country;
+    @Column(name = "post_code")
     private String postCode;
 
     public String getHouseNumber() {
