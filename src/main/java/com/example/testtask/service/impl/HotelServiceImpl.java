@@ -86,11 +86,12 @@ public class HotelServiceImpl implements HotelService {
 
     @Override
     @Transactional
-    public void addAmenities(Long id, List<String> amenities) {
+    public Set<String> addAmenities(Long id, List<String> amenities) {
         Hotel hotel = hotelRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Hotel not found with id: " + id));
         hotel.getAmenities().addAll(amenities);
         hotelRepository.save(hotel);
+        return hotel.getAmenities();
     }
 
     @Override

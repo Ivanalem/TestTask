@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 
 @RestController
@@ -36,8 +37,8 @@ public class HotelController {
     }
 
     @PostMapping("hotels/{id}/amenities")
-    public void addAmenities(@PathVariable Long id, @RequestBody List<String> amenities) {
-        hotelService.addAmenities(id, amenities);
+    public Set<String> addAmenities(@PathVariable Long id, @RequestBody List<String> amenities) {
+        return hotelService.addAmenities(id, amenities);
     }
 
     @GetMapping("histogram/{param}")

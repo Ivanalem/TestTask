@@ -1,10 +1,11 @@
 package com.example.testtask.model;
 
 import jakarta.persistence.Embeddable;
+import jakarta.validation.constraints.NotBlank;
 
 @Embeddable
 public class ArrivalTime {
-
+    @NotBlank
     private String checkIn;
     private String checkOut;
 
