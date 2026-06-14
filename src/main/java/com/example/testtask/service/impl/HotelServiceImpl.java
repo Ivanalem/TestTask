@@ -129,10 +129,10 @@ public class HotelServiceImpl implements HotelService {
                 .map(this::convertToSummaryDTO)
                 .collect(Collectors.toList());
     }
-    //Check null and convert param to lower case
+    //Check null and ignore case
     private boolean matchField(String fieldValue, String searchValue) {
         return searchValue == null || searchValue.isBlank() ||
-                (fieldValue != null && fieldValue.toLowerCase().contains(searchValue.toLowerCase()));
+                fieldValue != null && fieldValue.toLowerCase().contains(searchValue.toLowerCase());
     }
 
 
