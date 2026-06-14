@@ -1,10 +1,15 @@
 package com.example.testtask.model;
 
 import jakarta.persistence.Embeddable;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 
 @Embeddable
 public class Contacts {
+    @NotBlank
     private String phone;
+    @Email
+    @NotBlank
     private String email;
 
     public String getPhone() {

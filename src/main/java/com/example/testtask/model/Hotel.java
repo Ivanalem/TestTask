@@ -1,6 +1,7 @@
 package com.example.testtask.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -13,10 +14,11 @@ public class Hotel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(nullable = false)
+    @NotBlank
     private String name;
     @Column(length = 2000, nullable = false)
     private String description;
-
+    @NotBlank
     private String brand;
 
     @Embedded

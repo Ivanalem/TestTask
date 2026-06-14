@@ -2,15 +2,21 @@ package com.example.testtask.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+import jakarta.validation.constraints.NotBlank;
 
 @Embeddable
 public class Address {
     @Column(name = "house_number")
+    @NotBlank
     private String houseNumber;
+    @NotBlank
     private String street;
+    @NotBlank
     private String city;
+    @NotBlank
     private String country;
     @Column(name = "post_code")
+    @NotBlank
     private String postCode;
 
     public String getHouseNumber() {
